@@ -1,0 +1,62 @@
+version: '3'
+
+services:
+  main-service:
+    build: .
+    ports:
+      - "3000:3000"
+    depends_on:
+      - order-service
+      - menu-service
+      - inventory-service
+      - customer-service
+    environment:
+      - ORDER_SERVICE_URL=http://order-service:3001
+      - MENU_SERVICE_URL=http://menu-service:3002
+      - INVENTORY_SERVICE_URL=http://inventory-service:3003
+      - CUSTOMER_SERVICE_URL=http://customer-service:3004
+    networks:
+      - cafe-network
+
+  order-service:
+    build: ./Order_service
+    ports:
+      - "3001:3001"
+    environment:
+      - MONGODB_URI=mongodb+srv://Samyan:MJPbzim4rGra1tBZ@cluster72.pb0eh.mongodb.net/cafe_orders
+    networks:
+      - cafe-network
+
+  menu-service:
+    build: ./Menu_service
+    ports:
+      - "3002:3002"
+    environment:
+      - MONGODB_URI=mongodb+srv://Samyan:MJPbzim4rGra1tBZ@cluster72.pb0eh.mongodb.net/cafe_menu
+    networks:
+      - cafe-network
+
+  inventory-service:
+    build: ./Inventory_service
+    ports:
+      - "3003:3003"
+    environment:
+      - MONGODB_URI=mongodb+srv://Samyan:MJPbzim4rGra1tBZ@cluster72.pb0eh.mongodb.net/cafe_inventory
+      - ORDER_SERVICE_URL=http://order-service:3001
+      - MENU_SERVICE_URL=http://menu-service:3002
+    networks:
+      - cafe-network
+
+  customer-service:
+    build: ./Customer_service
+    ports:
+      - "3004:3004"
+    environment:
+      - MONGODB_URI=mongodb+srv://Samyan:MJPbzim4rGra1tBZ@cluster72.pb0eh.mongodb.net/cafe_customers
+      - ORDER_SERVICE_URL=http://order-service:3001
+    networks:
+      - cafe-network
+
+networks:
+  cafe-network:
+    driver: bridge 

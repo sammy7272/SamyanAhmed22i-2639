@@ -1,0 +1,103 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v2
+    
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '16'
+        
+    - name: Install dependencies for main service
+      run: npm install
+      
+    - name: Install dependencies for order service
+      run: cd Order_service && npm install
+      
+    - name: Install dependencies for menu service
+      run: cd Menu_service && npm install
+      
+    - name: Install dependencies for inventory service
+      run: cd Inventory_service && npm install
+      
+    - name: Install dependencies for customer service
+      run: cd Customer_service && npm install
+      
+    - name: Run tests (if you have tests)
+      run: |
+        echo "Running tests..."
+        # Add your test commands here
+        
+  docker-build:
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+    - uses: actions/checkout@v2
+    
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v1
+      
+    - name: Login to DockerHub
+      uses: docker/login-action@v1
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+        
+    - name: Build and push main service
+      uses: docker/build-push-action@v2
+      with:
+        context: .
+        push: true
+        tags: ${{ secrets.DOCKERHUB_USERNAME }}/cafe-main-service:latest
+        
+    - name: Build and push order service
+      uses: docker/build-push-action@v2
+      with:
+        context: ./Order_service
+        push: true
+        tags: ${{ secrets.DOCKERHUB_USERNAME }}/cafe-order-service:latest
+        
+    - name: Build and push menu service
+      uses: docker/build-push-action@v2
+      with:
+        context: ./Menu_service
+        push: true
+        tags: ${{ secrets.DOCKERHUB_USERNAME }}/cafe-menu-service:latest
+        
+    - name: Build and push inventory service
+      uses: docker/build-push-action@v2
+      with:
+        context: ./Inventory_service
+        push: true
+        tags: ${{ secrets.DOCKERHUB_USERNAME }}/cafe-inventory-service:latest
+        
+    - name: Build and push customer service
+      uses: docker/build-push-action@v2
+      with:
+        context: ./Customer_service
+        push: true
+        tags: ${{ secrets.DOCKERHUB_USERNAME }}/cafe-customer-service:latest
+        
+  deploy:
+    needs: docker-build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+    - name: Deploy to production
+      run: |
+        echo "Deploying to production..."
+        # Add your deployment commands here
+        # For example, SSH into your server and pull the latest images 

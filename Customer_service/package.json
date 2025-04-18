@@ -1,0 +1,19 @@
+{
+  "name": "customer-service",
+  "version": "1.0.0",
+  "description": "Customer microservice for cafe management system",
+  "main": "customerService.js",
+  "scripts": {
+    "start": "node customerService.js",
+    "dev": "nodemon customerService.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "mongoose": "^7.0.3",
+    "cors": "^2.8.5",
+    "axios": "^1.3.4"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.22"
+  }
+} 
