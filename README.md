@@ -7,6 +7,7 @@ This project implements a cafe management system using a microservices architect
 3. **Menu Service** (Port 3002) - Manages menu items and categories
 4. **Inventory Service** (Port 3003) - Tracks inventory and stock levels
 5. **Customer Service** (Port 3004) - Manages customer profiles and loyalty points
+6. **Payment Service** (Port 3005) - Handles payment processing
 
 ## Prerequisites
 
@@ -49,6 +50,9 @@ cd Inventory_service && npm install
 
 # Customer service
 cd Customer_service && npm install
+
+# Payment service
+cd Payment_service && npm install
 ```
 
 2. Start each service in a separate terminal:
@@ -67,6 +71,9 @@ cd Inventory_service && npm start
 
 # Customer service
 cd Customer_service && npm start
+
+# Payment service
+cd Payment_service && npm start
 ```
 
 ## API Endpoints
@@ -83,6 +90,8 @@ cd Customer_service && npm start
 - `GET /api/customers/:customerId/points` - Get customer loyalty points
 - `GET /api/customers/:customerId/orders` - Get customer order history
 - `GET /api/customers/:customerId/summary` - Get customer spending summary
+- `POST /api/payments/process` - Process a payment
+- `GET /api/payments/order/:orderId` - Get payment status for an order
 
 ### Order Service (Port 3001)
 
@@ -115,6 +124,11 @@ cd Customer_service && npm start
 - `PUT /api/customers/:customerId` - Update customer information
 - `POST /api/customers/:customerId/points` - Update customer points
 
+### Payment Service (Port 3005)
+
+- `POST /api/payments/process` - Process a payment
+- `GET /api/payments/order/:orderId` - Get payment status for an order
+
 ## CI/CD Pipeline
 
 The project includes a GitHub Actions workflow for continuous integration and deployment:
@@ -137,5 +151,6 @@ The services use the following environment variables:
 - `MENU_SERVICE_URL` - URL of the menu service
 - `INVENTORY_SERVICE_URL` - URL of the inventory service
 - `CUSTOMER_SERVICE_URL` - URL of the customer service
+- `PAYMENT_SERVICE_URL` - URL of the payment service
 
 These variables are set in the docker-compose.yml file for containerized deployment. 

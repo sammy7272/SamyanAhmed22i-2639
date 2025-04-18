@@ -12,6 +12,7 @@ const ORDER_SERVICE_URL = process.env.ORDER_SERVICE_URL || 'http://localhost:300
 const MENU_SERVICE_URL = process.env.MENU_SERVICE_URL || 'http://localhost:3002';
 const INVENTORY_SERVICE_URL = process.env.INVENTORY_SERVICE_URL || 'http://localhost:3003';
 const CUSTOMER_SERVICE_URL = process.env.CUSTOMER_SERVICE_URL || 'http://localhost:3004';
+const PAYMENT_SERVICE_URL = process.env.PAYMENT_SERVICE_URL || 'http://localhost:3005';
 
 // GET all menu items
 app.get('/api/menu', async (req, res) => {
@@ -166,6 +167,29 @@ app.put('/api/customers/:customerId', async (req, res) => {
     }
 });
 
+// Payment Endpoints
+// POST process payment
+app.post('/api/payments/process', async (req, res) => {
+    try {
+        const response = await axios.post(`${PAYMENT_SERVICE_URL}/api/payments/process`, req.body);
+        res.status(response.status).json(response.data);
+    } catch (error) {
+        console.error('Error processing payment:', error.response ? error.response.data : error.message);
+        res.status(error.response ? error.response.status : 500).json({ error: 'Error processing payment' });
+    }
+});
+
+// GET payment status by order ID
+app.get('/api/payments/order/:orderId', async (req, res) => {
+    try {
+        const response = await axios.get(`${PAYMENT_SERVICE_URL}/api/payments/order/${req.params.orderId}`);
+        res.json(response.data);
+    } catch (error) {
+        console.error('Error fetching payment status:', error.response ? error.response.data : error.message);
+        res.status(error.response ? error.response.status : 500).json({ error: 'Error fetching payment status' });
+    }
+});
+
 // Health check endpoint
 app.get('/health', (req, res) => {
     res.json({ status: 'OK', message: 'Main service is running' });
@@ -179,4 +203,5 @@ app.listen(PORT, () => {
     console.log(`- Menu Service: ${MENU_SERVICE_URL}`);
     console.log(`- Inventory Service: ${INVENTORY_SERVICE_URL}`);
     console.log(`- Customer Service: ${CUSTOMER_SERVICE_URL}`);
+    console.log(`- Payment Service: ${PAYMENT_SERVICE_URL}`);
 }); 

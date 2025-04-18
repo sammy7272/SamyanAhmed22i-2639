@@ -33,6 +33,9 @@ jobs:
     - name: Install dependencies for customer service
       run: cd Customer_service && npm install
       
+    - name: Install dependencies for payment service
+      run: cd Payment_service && npm install
+      
     - name: Run tests (if you have tests)
       run: |
         echo "Running tests..."
@@ -89,6 +92,13 @@ jobs:
         context: ./Customer_service
         push: true
         tags: ${{ secrets.DOCKERHUB_USERNAME }}/cafe-customer-service:latest
+        
+    - name: Build and push payment service
+      uses: docker/build-push-action@v2
+      with:
+        context: ./Payment_service
+        push: true
+        tags: ${{ secrets.DOCKERHUB_USERNAME }}/cafe-payment-service:latest
         
   deploy:
     needs: docker-build

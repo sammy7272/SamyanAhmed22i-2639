@@ -10,11 +10,13 @@ services:
       - menu-service
       - inventory-service
       - customer-service
+      - payment-service
     environment:
       - ORDER_SERVICE_URL=http://order-service:3001
       - MENU_SERVICE_URL=http://menu-service:3002
       - INVENTORY_SERVICE_URL=http://inventory-service:3003
       - CUSTOMER_SERVICE_URL=http://customer-service:3004
+      - PAYMENT_SERVICE_URL=http://payment-service:3005
     networks:
       - cafe-network
 
@@ -53,6 +55,16 @@ services:
       - "3004:3004"
     environment:
       - MONGODB_URI=mongodb+srv://Samyan:MJPbzim4rGra1tBZ@cluster72.pb0eh.mongodb.net/cafe_customers
+      - ORDER_SERVICE_URL=http://order-service:3001
+    networks:
+      - cafe-network
+
+  payment-service:
+    build: ./Payment_service
+    ports:
+      - "3005:3005"
+    environment:
+      - MONGODB_URI=mongodb+srv://Samyan:MJPbzim4rGra1tBZ@cluster72.pb0eh.mongodb.net/cafe_payments
       - ORDER_SERVICE_URL=http://order-service:3001
     networks:
       - cafe-network
